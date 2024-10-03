@@ -13,3 +13,5 @@ gcc main.c -o bin/main -I./include -L./lib -lraylib
 ```console
 gcc main.c -o bin/main -I./include -L./lib -lraylib -lopengl32 -lgdi32 -lwinmm
 ```
+
+To link statically on Windows, you can use `-l:libraylib.a` instead of `-lraylib`.

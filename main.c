@@ -246,7 +246,7 @@ void update_skeleton(Entity* skeleton, Entity* player)
 
     if (CheckCollisionRecs(skeleton->hitbox, player->hitbox))
     {
-        DrawTextEx(font, "COLLISION", (Vector2){10, 50}, FONT_SIZE, 0, BLACK);
+        if (debug) DrawTextEx(font, "COLLISION", (Vector2){10, 50}, FONT_SIZE, 0, BLACK);
         if (skeleton->direction == RIGHT)
         {
             skeleton->direction = LEFT;
