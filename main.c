@@ -216,9 +216,31 @@ void update_player(Entity* player)
 void update_skeleton(Entity* skeleton, Entity* player)
 {
     update_skeleton_hitbox(skeleton);
+
+    if (CheckCollisionRecs(skeleton->hitbox, player->hitbox))
+    {
+        if (debug) DrawTextEx(font, "COLLISION", (Vector2){10, 50}, FONT_SIZE, 0, BLACK);
+        if (skeleton->direction == RIGHT)
+        {
+            // skeleton->direction = LEFT;
+        }
+        else
+        {    
+            skeleton->direction = RIGHT;
+        }
+        skeleton->current_animation = ATTACK_1;
+        skeleton->is_attacking = true;
+        // player->position.x -= 20 * player->direction;
+        // player->position.y -= 20;
+    }
+
     if (skeleton->current_animation == WALK)
     {
         skeleton->is_moving = true;
+    }
+    else if (skeleton->current_animation == ATTACK_1)
+    {
+        skeleton->is_moving = false;
     }
 
     if (skeleton->position.x > GetScreenWidth() - skeleton->width*SKEL_SCALE_FACTOR)
@@ -232,7 +254,7 @@ void update_skeleton(Entity* skeleton, Entity* player)
         skeleton->is_moving = true;
     }
 
-    if (skeleton->is_moving)
+    if (skeleton->is_moving && !skeleton->is_attacking)
     {
         if (skeleton->direction == RIGHT)
         {
@@ -241,21 +263,6 @@ void update_skeleton(Entity* skeleton, Entity* player)
         else
         {
             skeleton->position.x -= 1;
-        }
-    }
-
-    if (CheckCollisionRecs(skeleton->hitbox, player->hitbox))
-    {
-        if (debug) DrawTextEx(font, "COLLISION", (Vector2){10, 50}, FONT_SIZE, 0, BLACK);
-        if (skeleton->direction == RIGHT)
-        {
-            skeleton->direction = LEFT;
-            skeleton->position.x -= 1;
-        }
-        else
-        {    
-            skeleton->direction = RIGHT;
-            skeleton->position.x += 1;
         }
     }
 
@@ -264,6 +271,7 @@ void update_skeleton(Entity* skeleton, Entity* player)
 
 void update_animator(Entity* entity)
 {
+    int prev_animation = entity->current_animation;
     entity->animator.timer += GetFrameTime();
 
     if (entity->animator.timer >= 0.1f)
@@ -277,10 +285,11 @@ void update_animator(Entity* entity)
 
     if (entity->animator.frame == entity->animator.max_frames - 1)
     {
-        if (entity->current_animation == ATTACK_1 || entity->current_animation == ATTACK_3)
-        {
+        // if (entity->current_animation == ATTACK_1 || entity->current_animation == ATTACK_3)
+        // {
             entity->is_attacking = false;
-        }
+            entity->current_animation = prev_animation;
+        // }
     }
     entity->animator.frame %= entity->animator.max_frames;
 }
